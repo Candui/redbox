@@ -1,11 +1,11 @@
 <?php
 
-if (!file_exists(__DIR__ . '/../vendor/autoload.php')){
+if (!file_exists(__DIR__ . '/vendor/autoload.php')){
     echo "Composer not installed<br>\n";
     exit(1);
 }
 
-require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
 $redisPing = false;
 $postgresMessage = false;

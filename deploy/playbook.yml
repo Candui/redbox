@@ -1,0 +1,55 @@
+---
+- name: Установка Docker и запуск проекта redbox
+  hosts: servers
+  become: yes
+
+  vars:
+    git_repo: https://github.com/Candui/redbox.git
+    project_dir: /opt/redbox
+
+  tasks:
+
+    - name: Установить зависимости
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+        update_cache: yes
+
+    - name: Добавить Docker GPG ключ
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Добавить Docker репозиторий
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+        state: present
+        update_cache: yes
+
+    - name: Установить Docker
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+
+    - name: Установить Docker Compose
+      get_url:
+        url: https://github.com/docker/compose/releases/download/v2.24.7/docker-compose-linux-x86_64
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+
+    - name: Клонировать проект 
+      git:
+        repo: "{{ git_repo }}"
+        dest: "{{ project_dir }}"
+        version: main
+
+    - name: Запустить docker compose
+      shell: docker compose up -d
+      args:
+        chdir: "{{ project_dir }}"
